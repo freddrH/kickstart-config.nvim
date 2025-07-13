@@ -16,7 +16,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -34,7 +34,6 @@ vim.o.showmode = false
 
 -- Enable break indent
 vim.o.breakindent = true
-
 -- Save undo history
 vim.o.undofile = true
 
@@ -67,7 +66,7 @@ vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
-vim.o.inccommand = 'split'
+-- vim.o.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
@@ -162,7 +161,6 @@ rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
-  'miikanissi/modus-themes.nvim',
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -173,14 +171,14 @@ require('lazy').setup({
 
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
   -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
+  --     {
+  --         'lewis6991/gitsigns.nvim',
+  --         config = function()
+  --             require('gitsigns').setup({
+  --                 -- Your gitsigns configuration here
+  --             })
+  --         end,
+  --     }
   --
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`.
@@ -608,6 +606,9 @@ require('lazy').setup({
               completion = {
                 callSnippet = 'Replace',
               },
+              workspace = {
+                checkThirdParty = false,
+              },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
             },
@@ -796,11 +797,12 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    -- 'folke/tokyonight.nvim',
+    'miikanissi/modus-themes.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
+      require('modus-themes').setup {
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
@@ -813,7 +815,6 @@ require('lazy').setup({
       vim.cmd.colorscheme 'modus_vivendi'
     end,
   },
-
   {
     'nvim-orgmode/orgmode',
     event = 'VeryLazy',
@@ -821,12 +822,27 @@ require('lazy').setup({
       -- Setup orgmode
       require('orgmode').setup {
         org_agenda_files = {
-          '~/org/projekt/journalinforande.org',
-          '~/org/projekt/mötenjournalinforande.org',
-          '~/org/projekt/nyttjournalsystemupphandling.org',
-          '~/org/planering3.org',
-          '~/org/komihag.org',
+          '/home/fredrikhks/org/projekt/journalinforande.org',
+          '/home/fredrikhks/org/projekt/mötenjournalinforande.org',
+          '/home/fredrikhks/org/projekt/nyttjournalsystemupphandling.org',
+          '/home/fredrikhks/org/planering3.org',
+          '/home/fredrikhks/org/komihag.org',
         },
+        ui = {
+          folds = {
+            colored = true,
+          },
+        },
+        notifications = {
+          enabled = false,
+          cron_enabled = false,
+          repeater_reminder_time = false,
+          deadline_warning_reminder_time = 0,
+          reminder_time = 10,
+          deadline_reminder = false,
+          scheduled_reminder = false,
+        },
+        org_use_property_inheritance = true,
 
         org_todo_keywords = { 'TODO', 'MOTE', 'WAITING', '|', 'CANCELLED', 'DONE' },
 
@@ -839,12 +855,42 @@ require('lazy').setup({
           CANCELLED = ':foreground lightgreen :weight bold',
           DONE = ':foreground lightgreen :weight bold',
         },
+        org_hide_leading_stars = true,
+        org_startup_indented = true,
+        org_agenda_span = 'day',
+
+        org_capture_templates = {
+          t = {
+            description = 'Task',
+            target = '~/org/planering3.org',
+            headline = 'Attgöra',
+            template = '* TODO %?',
+          },
+          d = {
+            description = 'Task journalinförande',
+            target = '~/org/projekt/journalinforande.org',
+            headline = 'Attgöra',
+            template = '* TODO %?',
+          },
+
+          m = {
+            description = 'Möte journalinförande',
+            target = '~/org/projekt/mötenjournalinforande.org',
+            headline = 'Möten',
+            template = '* MOTE %?',
+          },
+          mappings = {
+            org_return_uses_meta_return = true,
+          },
+          input = {
+            use_vim_ui = true,
+          },
+        },
       }
     end,
   },
-
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  -- { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -855,14 +901,14 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      -- require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -897,7 +943,7 @@ require('lazy').setup({
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
+        additional_vim_regex_highlighting = { 'org', 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
@@ -908,7 +954,7 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
-
+  --
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -919,7 +965,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  --  require 'kickstart.plugins.indent_line',
+  -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
