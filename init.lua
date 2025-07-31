@@ -22,6 +22,7 @@ vim.o.relativenumber = true
 vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
+-- Detta visa i i statusbar.
 vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
@@ -33,7 +34,9 @@ vim.o.showmode = false
 -- end)
 
 -- Enable break indent
-vim.o.breakindent = true
+-- F: Changing back. try :help breakindent, showbreak, autoindent
+vim.o.breakindent = false
+-- vim.o.autoindent = true
 -- Save undo history
 vim.o.undofile = true
 
@@ -81,11 +84,11 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-
--- Clear highlights on search when pressing <Esc> in normal mode
+-- Fredriks keymaps:
+-- vim.o.langmap = $¤ -- Clear highlights on search when pressing <Esc> in normal mode
+--
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -290,6 +293,7 @@ require('lazy').setup({
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'princejoogie/dir-telescope.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -349,7 +353,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
+      -- vim.keymap.set('n', '<leader>scg', '<cmd>Telescope dir live_grep<CR>', { desc = '[g] grep in dir' }, { noremap = true, silent = true })
+      -- vim.keymap.set('n', '<leader>scf', '<cmd>Telescope dir find_files<CR>', { desc = '[f] Find in dir' }, { noremap = true, silent = true })
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -371,6 +376,11 @@ require('lazy').setup({
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
+      end, { desc = '[S]earch [N]eovim files' })
+
+      -- Shortcut for searching hidden files
+      vim.keymap.set('n', '<leader>sF', function()
+        builtin.find_files { hidden = true }
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
@@ -753,6 +763,8 @@ require('lazy').setup({
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
 
+        ['<C-j>'] = { 'select_and_accept' },
+        -- ['C-j'] = { 'select_and_accept' },
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
@@ -797,12 +809,12 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    -- 'folke/tokyonight.nvim',
-    'miikanissi/modus-themes.nvim',
+    'folke/tokyonight.nvim',
+    -- 'miikanissi/modus-themes.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
-      require('modus-themes').setup {
+      require('tokyonight').setup {
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
@@ -811,10 +823,11 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      -- vim.cmd.colorscheme 'tokyonight-night'
-      vim.cmd.colorscheme 'modus_vivendi'
+      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'modus_vivendi'
     end,
   },
+  { vim.api.nvim_set_hl(0, 'Folded', { bg = '' }) },
   {
     'nvim-orgmode/orgmode',
     event = 'VeryLazy',
@@ -831,17 +844,18 @@ require('lazy').setup({
         ui = {
           folds = {
             colored = true,
+            highlight = false,
           },
         },
-        notifications = {
-          enabled = false,
-          cron_enabled = false,
-          repeater_reminder_time = false,
-          deadline_warning_reminder_time = 0,
-          reminder_time = 10,
-          deadline_reminder = false,
-          scheduled_reminder = false,
-        },
+        -- notifications = {
+        --   enabled = false,
+        --   cron_enabled = false,
+        --   repeater_reminder_time = false,
+        --   deadline_warning_reminder_time = 0,
+        --   reminder_time = 10,
+        --   deadline_reminder = false,
+        --   scheduled_reminder = false,
+        -- },
         org_use_property_inheritance = true,
 
         org_todo_keywords = { 'TODO', 'MOTE', 'WAITING', '|', 'CANCELLED', 'DONE' },
@@ -882,9 +896,11 @@ require('lazy').setup({
           mappings = {
             org_return_uses_meta_return = true,
           },
-          input = {
-            use_vim_ui = true,
-          },
+          -- läggtill:
+          -- org_todo_next till <c-space>
+          -- input = {
+          --   use_vim_ui = true,
+          -- },
         },
       }
     end,
@@ -921,9 +937,9 @@ require('lazy').setup({
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      -- statusline.section_location = function()
+      --return '%2l:%-2v'
+      --end
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
@@ -954,6 +970,15 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    opts = {
+      fast_wrap = {
+        map = '<M-e>',
+      },
+    },
+  },
   --
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -967,7 +992,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  require 'kickstart.plugins.autopairs',
+  -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
