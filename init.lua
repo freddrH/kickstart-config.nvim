@@ -87,18 +87,12 @@ vim.o.confirm = true
 -- Fredriks keymaps:
 -- vim.o.langmap = $¤ -- Clear highlights on search when pressing <Esc> in normal mode
 --
---  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -109,12 +103,6 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -378,10 +366,23 @@ require('lazy').setup({
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
 
+      -- Shortcut for searching orgmode files
+      vim.keymap.set('n', '<leader>so', function()
+        builtin.find_files { cwd = '~/org/' }
+      end, { desc = '[S]earch [o]rgmode files' })
+
+      -- grep orgmode files
+      vim.keymap.set('n', '<leader>sO', function()
+        builtin.live_grep {
+          cwd = '~/org/',
+          prompt_title = 'Live Grep in orgmode files',
+        }
+      end, { desc = '[S]earch [O] in Orgmode Files' })
+
       -- Shortcut for searching hidden files
       vim.keymap.set('n', '<leader>sF', function()
         builtin.find_files { hidden = true }
-      end, { desc = '[S]earch [N]eovim files' })
+      end, { desc = '[S]earch [N]eovim files(incl hidden)' })
     end,
   },
 
@@ -829,8 +830,9 @@ require('lazy').setup({
   },
   { vim.api.nvim_set_hl(0, 'Folded', { bg = '' }) },
   {
-    'nvim-orgmode/orgmode',
+    'freddrH/orgmode',
     event = 'VeryLazy',
+    branch = 'virtindent_w_wrap',
     config = function()
       -- Setup orgmode
       require('orgmode').setup {
@@ -841,12 +843,12 @@ require('lazy').setup({
           '/home/fredrikhks/org/planering3.org',
           '/home/fredrikhks/org/komihag.org',
         },
-        ui = {
-          folds = {
-            colored = true,
-            highlight = false,
-          },
-        },
+        -- ui = {
+        --   folds = {
+        --     colored = true,
+        --     highlight = false,
+        --   },
+        -- },
         -- notifications = {
         --   enabled = false,
         --   cron_enabled = false,
@@ -1028,5 +1030,6 @@ require('lazy').setup({
   },
 })
 
+require 'keymaps'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
