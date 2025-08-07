@@ -3,7 +3,7 @@
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
+vim.o.foldlevelstart = 99
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -24,7 +24,7 @@ vim.o.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 -- Detta visa i i statusbar.
 vim.o.showmode = false
-
+vim.o.foldtext = ''
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -248,6 +248,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>o', group = '[O]rgmode' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -282,6 +283,7 @@ require('lazy').setup({
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'princejoogie/dir-telescope.nvim' },
+      { 'nvim-orgmode/telescope-orgmode.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -328,6 +330,8 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'orgmode')
+      pcall(require('telescope').load_extension, 'dir')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -341,8 +345,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-      -- vim.keymap.set('n', '<leader>scg', '<cmd>Telescope dir live_grep<CR>', { desc = '[g] grep in dir' }, { noremap = true, silent = true })
-      -- vim.keymap.set('n', '<leader>scf', '<cmd>Telescope dir find_files<CR>', { desc = '[f] Find in dir' }, { noremap = true, silent = true })
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -365,19 +367,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
-
-      -- Shortcut for searching orgmode files
-      vim.keymap.set('n', '<leader>so', function()
-        builtin.find_files { cwd = '~/org/' }
-      end, { desc = '[S]earch [o]rgmode files' })
-
-      -- grep orgmode files
-      vim.keymap.set('n', '<leader>sO', function()
-        builtin.live_grep {
-          cwd = '~/org/',
-          prompt_title = 'Live Grep in orgmode files',
-        }
-      end, { desc = '[S]earch [O] in Orgmode Files' })
 
       -- Shortcut for searching hidden files
       vim.keymap.set('n', '<leader>sF', function()
@@ -804,14 +793,13 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
+  { 'miikanissi/modus-themes.nvim' },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
-    -- 'miikanissi/modus-themes.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
@@ -828,7 +816,6 @@ require('lazy').setup({
       -- vim.cmd.colorscheme 'modus_vivendi'
     end,
   },
-  { vim.api.nvim_set_hl(0, 'Folded', { bg = '' }) },
   {
     'freddrH/orgmode',
     event = 'VeryLazy',
@@ -838,6 +825,8 @@ require('lazy').setup({
       require('orgmode').setup {
         org_agenda_files = {
           '/home/fredrikhks/org/projekt/journalinforande.org',
+          '/home/fredrikhks/org/projekt/jinfTODO.org',
+          '/home/fredrikhks/org/nya_möten.org',
           '/home/fredrikhks/org/projekt/mötenjournalinforande.org',
           '/home/fredrikhks/org/projekt/nyttjournalsystemupphandling.org',
           '/home/fredrikhks/org/planering3.org',
@@ -845,7 +834,7 @@ require('lazy').setup({
         },
         -- ui = {
         --   folds = {
-        --     colored = true,
+        --     colored = false,
         --     highlight = false,
         --   },
         -- },
@@ -859,6 +848,7 @@ require('lazy').setup({
         --   scheduled_reminder = false,
         -- },
         org_use_property_inheritance = true,
+        org_startup_folded = 'showeverything',
 
         org_todo_keywords = { 'TODO', 'MOTE', 'WAITING', '|', 'CANCELLED', 'DONE' },
 
@@ -884,7 +874,7 @@ require('lazy').setup({
           },
           d = {
             description = 'Task journalinförande',
-            target = '~/org/projekt/journalinforande.org',
+            target = '~/org/projekt/jinfTODO.org',
             headline = 'Attgöra',
             template = '* TODO %?',
           },
@@ -895,8 +885,17 @@ require('lazy').setup({
             headline = 'Möten',
             template = '* MOTE %?',
           },
-          mappings = {
-            org_return_uses_meta_return = true,
+        },
+        mappings = {
+          org_return_uses_meta_return = true,
+          org = {
+            org_todo = '<M-l>',
+            org_do_promote = { '<<', '<M-H>' },
+            org_do_demote = { '>>', '<M-L>' },
+            org_move_subtree_up = { '<prefix>K', '<M-K>' },
+            org_move_subtree_down = { '<prefix>J', '<M-J>' },
+            org_todo_prev = { '<M-h>' },
+            org_return = '<M-CR>',
           },
           -- läggtill:
           -- org_todo_next till <c-space>
@@ -973,6 +972,11 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
   {
+    'Aasim-A/scrollEOF.nvim',
+    event = { 'CursorMoved', 'WinScrolled' },
+    opts = {},
+  },
+  {
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
     opts = {
@@ -1031,5 +1035,6 @@ require('lazy').setup({
 })
 
 require 'keymaps'
+require 'colors'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
