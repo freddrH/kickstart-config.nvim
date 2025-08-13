@@ -29,9 +29,9 @@ vim.o.foldtext = ''
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
--- vim.schedule(function()
---   vim.o.clipboard = 'unnamedplus'
--- end)
+vim.schedule(function()
+  vim.o.clipboard = 'unnamedplus'
+end)
 
 -- Enable break indent
 -- F: Changing back. try :help breakindent, showbreak, autoindent
@@ -824,11 +824,14 @@ require('lazy').setup({
       -- Setup orgmode
       require('orgmode').setup {
         org_agenda_files = {
-          '/home/fredrikhks/org/projekt/journalinforande.org',
-          '/home/fredrikhks/org/projekt/jinfTODO.org',
+          '~/org/projekt/nytthjs/*',
+          '~/org/roam/*',
+          -- '/home/fredrikhks/org/projekt/nytthjs/journalinforande.org',,
+          -- '/home/fredrikhks/org/projekt/nytthjs/jinfTODO.org',
+          -- '/home/fredrikhks/org/projekt/nytthjs/jinfInformatik.org',
           '/home/fredrikhks/org/nya_möten.org',
-          '/home/fredrikhks/org/projekt/mötenjournalinforande.org',
-          '/home/fredrikhks/org/projekt/nyttjournalsystemupphandling.org',
+          -- '/home/fredrikhks/org/projekt/nytthjs/mötenjournalinforande.org',
+          -- '/home/fredrikhks/org/projekt/nytthjs/nyttjournalsystemupphandling.org',
           '/home/fredrikhks/org/planering3.org',
           '/home/fredrikhks/org/komihag.org',
         },
@@ -874,14 +877,20 @@ require('lazy').setup({
           },
           d = {
             description = 'Task journalinförande',
-            target = '~/org/projekt/jinfTODO.org',
+            target = '~/org/projekt/nytthjs/jinfTODO.org',
+            headline = 'Attgöra',
+            template = '* TODO %?',
+          },
+          i = {
+            description = 'Task Informatik',
+            target = '~/org/projekt/nytthjs/jinfInformatik.org',
             headline = 'Attgöra',
             template = '* TODO %?',
           },
 
           m = {
             description = 'Möte journalinförande',
-            target = '~/org/projekt/mötenjournalinforande.org',
+            target = '~/org/projekt/nytthjs/mötenjournalinforande.org',
             headline = 'Möten',
             template = '* MOTE %?',
           },
@@ -985,6 +994,30 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+  },
+  {
+    'chipsenkbeil/org-roam.nvim',
+    dependencies = {
+      {
+        'nvim-orgmode/orgmode',
+      },
+    },
+    config = function()
+      require('org-roam').setup {
+        directory = '~/org/roam',
+        -- optional
+        -- org_files = {
+        --   "~/another_org_dir",
+        --   "~/some/folder/*.org",
+        --   "~/a/single/org_file.org",
+        -- }
+      }
+    end,
+  },
   --
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1036,5 +1069,7 @@ require('lazy').setup({
 
 require 'keymaps'
 require 'colors'
+require 'harpoonconf'
+require 'settings'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

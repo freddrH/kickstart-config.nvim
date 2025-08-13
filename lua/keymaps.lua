@@ -55,6 +55,13 @@ vim.keymap.set('n', '<leader>scg', '<cmd>Telescope dir live_grep<CR>', { desc = 
 
 vim.keymap.set('n', '<leader>scf', '<cmd>Telescope dir find_files<CR>', { desc = '[f] Find in dir', noremap = true, silent = true })
 
+-- telescope marks
+vim.keymap.set('n', '<leader>sm', function()
+  builtin.marks {
+    only_current_file = true,
+  }
+end, { desc = '[m]arks in current file', noremap = true, silent = true })
+
 -- BUFFER / FILECOMMANDS
 vim.keymap.set('n', '<leader>pw', '<cmd>w<cr>', { desc = 'write buffer' })
 vim.keymap.set('n', '<leader>pe', '<cmd>Ex<cr>', { desc = 'explore' })
