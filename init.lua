@@ -6,7 +6,7 @@ vim.g.maplocalleader = ' '
 vim.o.foldlevelstart = 99
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
-
+vim.o.inccommand = 'split'
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!

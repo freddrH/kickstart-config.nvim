@@ -23,6 +23,8 @@ local builtin = require 'telescope.builtin'
 local teleorg = require('telescope').extensions.orgmode
 -- vim.keymap.set('n', '<c-space', require('orgmode').action('org.todo'))
 -- orgmode
+vim.keymap.set('n', '<leader>op', 'j<end>?TODO<esc><cmd>nohlsearch<CR>', { desc = 'org align agenda' })
+
 vim.keymap.set('n', '<leader>to', '<cmd>Org indent_mode<cr><cmd>Org indent_mode<cr>', { desc = 'org [R]efile' })
 
 vim.keymap.set('n', '<leader>oR', teleorg.refile_heading, { desc = 'org [R]efile' })
@@ -67,3 +69,9 @@ vim.keymap.set('n', '<leader>pw', '<cmd>w<cr>', { desc = 'write buffer' })
 vim.keymap.set('n', '<leader>pe', '<cmd>Ex<cr>', { desc = 'explore' })
 vim.keymap.set('n', '<leader>pq', '<cmd>bd<cr>', { desc = 'delete buffer' })
 vim.keymap.set('n', '<leader>pr', '<cmd>w | e<cr>', { desc = 'reload buffer' })
+
+-- Window commands
+vim.keymap.set('n', '<leader>wo', '<c-w>o', { desc = 'window only' })
+vim.keymap.set('n', '<leader>ws', '<c-w>s', { desc = 'window split s' })
+vim.keymap.set('n', '<leader>wv', '<c-w>v', { desc = 'window vplit v' })
+vim.keymap.set('n', '<leader>wq', '<c-w>q', { desc = 'window quit' })
