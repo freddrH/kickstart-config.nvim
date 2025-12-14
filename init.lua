@@ -1,4 +1,4 @@
--- Set <space> as the leader key
+--Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
@@ -819,19 +819,14 @@ require('lazy').setup({
   {
     'freddrH/orgmode',
     event = 'VeryLazy',
-    branch = 'virtindent_w_wrap',
+    branch = 'origin/virtindent_w_wrap',
     config = function()
       -- Setup orgmode
       require('orgmode').setup {
         org_agenda_files = {
-          '~/org/projekt/nytthjs/*',
-          '~/org/roam/*',
-          -- '/home/fredrikhks/org/projekt/nytthjs/journalinforande.org',,
-          -- '/home/fredrikhks/org/projekt/nytthjs/jinfTODO.org',
-          -- '/home/fredrikhks/org/projekt/nytthjs/jinfInformatik.org',
+          '/home/fredrikhks/org/projekt/nytthjs/*',
+          '/home/fredrikhks/org/roam/*',
           '/home/fredrikhks/org/nya_möten.org',
-          -- '/home/fredrikhks/org/projekt/nytthjs/mötenjournalinforande.org',
-          -- '/home/fredrikhks/org/projekt/nytthjs/nyttjournalsystemupphandling.org',
           '/home/fredrikhks/org/planering3.org',
           '/home/fredrikhks/org/komihag.org',
         },
@@ -919,7 +914,7 @@ require('lazy').setup({
   -- { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
+    'nvim-mini/mini.nvim',
     config = function()
       -- Better Around/Inside textobjects
       --
