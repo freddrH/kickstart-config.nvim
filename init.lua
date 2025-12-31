@@ -817,9 +817,9 @@ require('lazy').setup({
     end,
   },
   {
-    'freddrH/orgmode',
+    'nvim-orgmode/orgmode',
     event = 'VeryLazy',
-    branch = 'origin/virtindent_w_wrap',
+    -- branch = 'origin/virtindent_w_wrap',
     config = function()
       -- Setup orgmode
       require('orgmode').setup {
@@ -934,25 +934,30 @@ require('lazy').setup({
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
+      -- local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
+      -- ---@diagnostic disable-next-line: duplicate-set-field
       -- statusline.section_location = function()
-      --return '%2l:%-2v'
-      --end
+      --   return '%2l:%-2v'
+      -- end
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    branch = 'master',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
@@ -1066,5 +1071,6 @@ require 'keymaps'
 require 'colors'
 require 'harpoonconf'
 require 'settings'
+require 'lualineconf'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
